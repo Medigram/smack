@@ -533,7 +533,7 @@ public abstract class Connection {
      */
     public void addConnectionListener(ConnectionListener connectionListener) {
         if (!isConnected()) {
-            throw new IllegalStateException("Not connected to server.");
+            return;
         }
         if (connectionListener == null) {
             return;
@@ -605,7 +605,7 @@ public abstract class Connection {
      */
     public void addPacketListener(PacketListener packetListener, PacketFilter packetFilter) {
         if (packetListener == null) {
-            throw new NullPointerException("Packet listener is null.");
+            return;
         }
         ListenerWrapper wrapper = new ListenerWrapper(packetListener, packetFilter);
         recvListeners.put(packetListener, wrapper);
@@ -642,7 +642,7 @@ public abstract class Connection {
      */
     public void addPacketSendingListener(PacketListener packetListener, PacketFilter packetFilter) {
         if (packetListener == null) {
-            throw new NullPointerException("Packet listener is null.");
+        	return;
         }
         ListenerWrapper wrapper = new ListenerWrapper(packetListener, packetFilter);
         sendListeners.put(packetListener, wrapper);
@@ -691,7 +691,7 @@ public abstract class Connection {
     public void addPacketInterceptor(PacketInterceptor packetInterceptor,
             PacketFilter packetFilter) {
         if (packetInterceptor == null) {
-            throw new NullPointerException("Packet interceptor is null.");
+        	return;
         }
         interceptors.put(packetInterceptor, new InterceptorWrapper(packetInterceptor, packetFilter));
     }

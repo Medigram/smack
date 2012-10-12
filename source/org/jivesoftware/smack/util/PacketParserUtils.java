@@ -66,6 +66,24 @@ public class PacketParserUtils {
         message.setPacketID(id == null ? Packet.ID_NOT_AVAILABLE : id);
         message.setTo(parser.getAttributeValue("", "to"));
         message.setFrom(parser.getAttributeValue("", "from"));
+        
+        String channel = parser.getAttributeValue("", "channel");
+        if(channel != null && channel.length() > 0){
+        	message.setChannel(channel);
+        }
+        String cid = parser.getAttributeValue("", "cid");
+        if(cid != null && cid.length() > 0){
+        	message.setCid(cid);
+        }
+        String sid = parser.getAttributeValue("", "sid");
+        if(sid != null && sid.length() > 0){
+        	message.setSid(sid);
+        }
+        String typeString = parser.getAttributeValue("", "type");
+        if(typeString != null && typeString.length() > 0){
+        	message.setTypeString(typeString);
+        }
+        
         message.setType(Message.Type.fromString(parser.getAttributeValue("", "type")));
         String language = getLanguageAttribute(parser);
         

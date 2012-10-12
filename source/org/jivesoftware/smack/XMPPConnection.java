@@ -188,10 +188,10 @@ public class XMPPConnection extends Connection {
     @Override
     public synchronized void login(String username, String password, String resource) throws XMPPException {
         if (!isConnected()) {
-            throw new IllegalStateException("Not connected to server.");
+        	return;
         }
         if (authenticated) {
-            throw new IllegalStateException("Already logged in to server.");
+        	return;
         }
         // Do partial version of nameprep on the username.
         username = username.toLowerCase().trim();
@@ -221,9 +221,10 @@ public class XMPPConnection extends Connection {
         }
         else {
             this.user = username + "@" + getServiceName();
-            if (resource != null) {
-                this.user += "/" + resource;
-            }
+            this.user += "/Android"; 
+            //if (resource != null) {
+            //    this.user += "/" + resource;
+            //}
         }
 
         // If compression is enabled then request the server to use stream compression
@@ -236,7 +237,7 @@ public class XMPPConnection extends Connection {
         anonymous = false;
 
         // Create the roster if it is not a reconnection or roster already created by getRoster()
-        if (this.roster == null) {
+        /*if (this.roster == null) {
         	if(rosterStorage==null){
         		this.roster = new Roster(this);
         	}
@@ -246,7 +247,7 @@ public class XMPPConnection extends Connection {
         }
         if (config.isRosterLoadedAtLogin()) {
             this.roster.reload();
-        }
+        }*/
 
         // Set presence to online.
         if (config.isSendPresence()) {

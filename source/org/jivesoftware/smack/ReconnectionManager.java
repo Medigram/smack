@@ -83,14 +83,16 @@ public class ReconnectionManager implements ConnectionListener {
                  * @return the number of seconds until the next reconnection attempt.
                  */
                 private int timeDelay() {
-                    attempts++;
+                	return 10;
+                	
+                 /*   attempts++;
                     if (attempts > 13) {
                 	return randomBase*6*5;      // between 2.5 and 7.5 minutes (~5 minutes)
                     }
                     if (attempts > 7) {
                 	return randomBase*6;       // between 30 and 90 seconds (~1 minutes)
                     }
-                    return randomBase;       // 10 seconds
+                    return randomBase; */      // 10 seconds
                 }
 
                 /**
@@ -102,31 +104,31 @@ public class ReconnectionManager implements ConnectionListener {
                     // the user cancel the reconnection process {@link Connection#disconnect()}
                     while (ReconnectionManager.this.isReconnectionAllowed()) {
                         // Find how much time we should wait until the next reconnection
-                        int remainingSeconds = timeDelay();
+         //               int remainingSeconds = timeDelay();
                         // Sleep until we're ready for the next reconnection attempt. Notify
                         // listeners once per second about how much time remains before the next
                         // reconnection attempt.
-                        while (ReconnectionManager.this.isReconnectionAllowed() &&
+                        /*while (ReconnectionManager.this.isReconnectionAllowed() &&
                                 remainingSeconds > 0)
-                        {
+                        {*/
                             try {
-                                Thread.sleep(1000);
-                                remainingSeconds--;
-                                ReconnectionManager.this
-                                        .notifyAttemptToReconnectIn(remainingSeconds);
+                                Thread.sleep(10000);
+           //                     remainingSeconds-=10;
+                            //    ReconnectionManager.this
+                            //           .notifyAttemptToReconnectIn(remainingSeconds);
                             }
                             catch (InterruptedException e1) {
                                 e1.printStackTrace();
                                 // Notify the reconnection has failed
                                 ReconnectionManager.this.notifyReconnectionFailed(e1);
                             }
-                        }
+                        //}
 
                         // Makes a reconnection attempt
                         try {
-                            if (ReconnectionManager.this.isReconnectionAllowed()) {
+  //                          if (ReconnectionManager.this.isReconnectionAllowed()) {*/
                                 connection.connect();
-                            }
+    //                        }
                         }
                         catch (XMPPException e) {
                             // Fires the failed reconnection notification

@@ -240,7 +240,7 @@ public class SASLAuthentication implements UserAuthentication {
                 synchronized (this) {
                     if (!saslNegotiated && !saslFailed) {
                         try {
-                            wait(30000);
+                            wait(10000);
                         }
                         catch (InterruptedException e) {
                             // Ignore
@@ -322,7 +322,7 @@ public class SASLAuthentication implements UserAuthentication {
                 synchronized (this) {
                     if (!saslNegotiated && !saslFailed) {
                         try {
-                            wait(30000);
+                            wait(10000);
                         }
                         catch (InterruptedException e) {
                             // Ignore
@@ -348,10 +348,14 @@ public class SASLAuthentication implements UserAuthentication {
                     return bindResourceAndEstablishSession(resource);
                 }
                 else {
+                  throw new XMPPException("SASL authentication failed using mechanism " +
+                          selectedMechanism);
+              }
+                /* else {
                     // SASL authentication failed so try a Non-SASL authentication
                     return new NonSASLAuthentication(connection)
                             .authenticate(username, password, resource);
-                }
+                }*/
             }
             catch (XMPPException e) {
                 throw e;
@@ -359,14 +363,20 @@ public class SASLAuthentication implements UserAuthentication {
             catch (Exception e) {
                 e.printStackTrace();
                 // SASL authentication failed so try a Non-SASL authentication
-                return new NonSASLAuthentication(connection)
-                        .authenticate(username, password, resource);
+                /*return new NonSASLAuthentication(connection)
+                        .authenticate(username, password, resource);*/
             }
         }
+    		else {
+    			throw new XMPPException("No SASL authentication mechanism selected");
+    		}
+
+        return null;
+        /*
         else {
             // No SASL method was found so try a Non-SASL authentication
             return new NonSASLAuthentication(connection).authenticate(username, password, resource);
-        }
+        }*/
     }
 
     /**
@@ -425,7 +435,7 @@ public class SASLAuthentication implements UserAuthentication {
         synchronized (this) {
             if (!resourceBinded) {
                 try {
-                    wait(30000);
+                    wait(10000);
                 }
                 catch (InterruptedException e) {
                     // Ignore
@@ -477,6 +487,7 @@ public class SASLAuthentication implements UserAuthentication {
             // Server never offered session establishment
             throw new XMPPException("Session establishment not offered by server");
         }
+        
         return userJID;
     }
 
