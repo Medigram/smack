@@ -7,6 +7,7 @@ import java.net.Proxy;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.net.SocketFactory;
+import org.jivesoftware.smack.util.DNSUtil;
 
 /**
  * SocketFactory for direct connection
@@ -26,9 +27,13 @@ class DirectSocketFactory
     public Socket createSocket(String host, int port) 
         throws IOException, UnknownHostException
     {
-        Socket newSocket = new Socket(Proxy.NO_PROXY);
-        InetAddress resolved[] = InetAddress.getAllByName(host);
-        newSocket.connect(new InetSocketAddress(resolved[(roundrobin++) % resolved.length],port));
+    	Socket newSocket = new Socket(Proxy.NO_PROXY);
+        newSocket.setReuseAddress(true);
+        InetAddress resolved = InetAddress.getByName(host);
+        //InetAddress resolved[] = InetAddress.getAllByName(host);
+        //newSocket.connect(new InetSocketAddress(resolved[(roundrobin++) % resolved.length],port));
+        newSocket.connect(new InetSocketAddress(resolved, port));
+        
         return newSocket;
     }
 
@@ -43,6 +48,7 @@ class DirectSocketFactory
         throws IOException
     {
         Socket newSocket = new Socket(Proxy.NO_PROXY);
+        newSocket.setReuseAddress(true);
         newSocket.connect(new InetSocketAddress(host,port));
         return newSocket;
     }
