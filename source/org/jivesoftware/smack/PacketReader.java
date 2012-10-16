@@ -139,6 +139,15 @@ class PacketReader {
 
         // Shut down the listener executor.
         listenerExecutor.shutdown();
+        try {
+        	if (!listenerExecutor.awaitTermination(1, TimeUnit.SECONDS)) {
+        		listenerExecutor.shutdownNow();
+          }
+        } catch (InterruptedException e) {
+        	if (!listenerExecutor.isTerminated()) {
+        		listenerExecutor.shutdownNow();
+          }
+        }
     }
 
     /**
