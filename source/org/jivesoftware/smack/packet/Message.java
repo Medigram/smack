@@ -92,7 +92,7 @@ import java.util.*;
  * @author Matt Tucker
  */
 public class Message extends Packet {
-	private String cid, typeString, channel, sid;
+	private String cid, typeString, channel, sid, numItems;
 	private Type type = Type.normal;
 	private String thread = null;
 	private String language;
@@ -165,6 +165,9 @@ public class Message extends Packet {
 	}
 	public void setSid(String sid) {
 		this.sid = sid;
+	}
+	public void setNumItems(String numItems) {
+		this.numItems = numItems;
 	}
 
 	/**
@@ -517,6 +520,10 @@ public class Message extends Packet {
 		}
 		if (sid != null) {
 			buf.append(" sid=\"").append(StringUtils.escapeForXML(sid)).append("\"");
+		}
+
+		if (numItems != null) {
+			buf.append(" num_items=\"").append(StringUtils.escapeForXML(numItems)).append("\"");
 		}
 
 		buf.append(">");

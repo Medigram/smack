@@ -75,6 +75,11 @@ public class PacketParserUtils {
         if(cid != null && cid.length() > 0){
         	message.setCid(cid);
         }
+        String numItems = parser.getAttributeValue("", "num_items");
+        if(numItems != null && numItems.length() > 0){
+        	message.setNumItems(numItems);
+        }
+
         String sid = parser.getAttributeValue("", "sid");
         if(sid != null && sid.length() > 0){
         	message.setSid(sid);
