@@ -154,20 +154,40 @@ public class Message extends Packet {
 		this.type = type;
 	}
 
-	public void setTypeString(String typeString) {
-		this.typeString = typeString;
+
+	/**
+	 * Custom accessors and modifiers
+	 */
+	public String getChannel() {
+		return channel;
+	}
+	public String getCid() {
+		return cid;
+	}
+	public String getNumItems() {
+		return numItems;
+	}
+	public String getSid() {
+		return sid;
+	}
+	public String getTypeString() {
+		return typeString;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
 	}
 	public void setCid(String cid) {
 		this.cid = cid;
-	}
-	public void setChannel(String channel) {
-		this.channel = channel;
 	}
 	public void setSid(String sid) {
 		this.sid = sid;
 	}
 	public void setNumItems(String numItems) {
 		this.numItems = numItems;
+	}
+	public void setTypeString(String typeString) {
+		this.typeString = typeString;
 	}
 
 	/**
