@@ -560,7 +560,7 @@ public class XMPPConnection extends Connection {
 	}
 
 	private void connectUsingConfiguration(ConnectionConfiguration config)
-			throws XMPPException {
+			throws Exception {
 		//String host = config.getHost();
     DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
     String host = address.getHost();
@@ -594,7 +594,7 @@ public class XMPPConnection extends Connection {
 	 * @throws XMPPException
 	 *           if establishing a connection to the server fails.
 	 */
-	private void initConnection() throws XMPPException {
+	private void initConnection() throws Exception {
 		boolean isFirstInitialization = packetReader == null
 				|| packetWriter == null;
 		usingCompression = false;
@@ -1032,9 +1032,13 @@ public class XMPPConnection extends Connection {
 	 *           exceptions can be used to present more appropiate error messages
 	 *           to end-users.
 	 */
-	public void connect() throws XMPPException {
+	 public void connect() throws XMPPException {
 		// Stablishes the connection, readers and writers
+		try {
 		connectUsingConfiguration(config);
+		} catch(Exception e) {
+			throw new XMPPException();
+}
 		// Automatically makes the login if the user was previouslly connected
 		// successfully
 		// to the server and the connection was terminated abruptly
