@@ -60,7 +60,7 @@ class PacketWriter {
 	 * @param connection
 	 *          the connection.
 	 */
-	protected PacketWriter(XMPPConnection connection) {
+	protected PacketWriter(XMPPConnection connection) throws Exception {
 		this.queue = new ArrayBlockingQueue<Packet>(500, true);
 		this.connection = connection;
 		init();
@@ -77,7 +77,11 @@ class PacketWriter {
 
 		writerThread = new Thread() {
 			public void run() {
+				try{
 				writePackets(this);
+				} catch(Exception e) {
+				  PacketWriter.this.connection.disconnect();
+}
 			}
 		};
 		writerThread.setName("Smack Packet Writer ("
@@ -188,7 +192,7 @@ class PacketWriter {
 		return packet;
 	}
 
-	private void writePackets(Thread thisThread) {
+	private void writePackets(Thread thisThread) throws Exception {
 		try {
 			// Open the stream.
 			openStream();
@@ -198,7 +202,7 @@ class PacketWriter {
 				if (packet != null) {
 					synchronized (writer) {
 						writer.write(packet.toXML());
-						writer.flush();
+							writer.flush();
 						// Keep track of the last time a stanza was sent to the server
 						lastActive = System.currentTimeMillis();
 					}
