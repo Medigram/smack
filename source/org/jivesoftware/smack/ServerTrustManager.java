@@ -65,10 +65,10 @@ class ServerTrustManager implements X509TrustManager {
 		this.server = server;
 
 		InputStream in = null;
-		/*
-		 * synchronized (stores) { if (stores.containsKey(options)) { trustStore =
-		 * stores.get(options); } else {
-		 */
+		
+		  synchronized (stores) { if (stores.containsKey(options)) { trustStore =
+		  stores.get(options); } else {
+		 
 		
 		// This is a stupid hack that had to be put in because android changed the filepath
 		// of their keystore locations in IceCreamSandwich. 
@@ -116,10 +116,10 @@ class ServerTrustManager implements X509TrustManager {
 		}
 		stores.put(options, trustStore);
 
-		/*
-		 * if (trustStore == null) // Disable root CA checking
-		 * configuration.setVerifyRootCAEnabled(false); }
-		 */
+		
+		 if (trustStore == null) // Disable root CA checking
+		  configuration.setVerifyRootCAEnabled(false); }
+		 
 	}
 
 	public X509Certificate[] getAcceptedIssuers() {
