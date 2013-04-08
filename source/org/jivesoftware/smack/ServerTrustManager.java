@@ -65,33 +65,34 @@ class ServerTrustManager implements X509TrustManager {
 		this.server = server;
 
 		InputStream in = null;
-		
+	
+		// This is a stupid hack that had to be put in because android changed the filepath
+                // of their keystore locations in IceCreamSandwich.
+               	// Check Android SDK version - if IceCreamSandwich or above, use default path
+                if (Build.VERSION.SDK_INT >= 14) { // Magic number 14 is IceCreamSandwich
+                	// Can't look up constant in Build because android versions below 14 don't have it
+                        configuration.setTruststoreType("AndroidCAStore");
+                        configuration.setTruststorePassword(null);
+                        configuration.setTruststorePath(null);
+		} else {
+               		// If lower than IceCreamSandwich, manually set path
+                	configuration.setTruststoreType("BKS");
+                     	String path = System.getProperty("javax.net.ssl.trustStore");
+                     	if (path == null) {
+                        	path = System.getProperty("java.home") + File.separator + "etc"
+                                	+ File.separator + "security" + File.separator + "cacerts.bks";
+                        }
+                        configuration.setTruststorePath(path);
+      		}
+
+              	KeyStoreOptions options = new KeyStoreOptions(
+                	configuration.getTruststoreType(), configuration.getTruststorePath(),
+                     	configuration.getTruststorePassword());
+
 		synchronized (stores) { 
 			if (stores.containsKey(options)) { 
 				trustStore = stores.get(options); 
 			} else {
-				// This is a stupid hack that had to be put in because android changed the filepath
-				// of their keystore locations in IceCreamSandwich. 
-				// Check Android SDK version - if IceCreamSandwich or above, use default path
-				if (Build.VERSION.SDK_INT >= 14) { // Magic number 14 is IceCreamSandwich 
-					// Can't look up constant in Build because android versions below 14 don't have it
-					configuration.setTruststoreType("AndroidCAStore");
-					configuration.setTruststorePassword(null);
-					configuration.setTruststorePath(null);
-				} else {
-					// If lower than IceCreamSandwich, manually set path
-					configuration.setTruststoreType("BKS");
-					String path = System.getProperty("javax.net.ssl.trustStore");
-					if (path == null) {
-						path = System.getProperty("java.home") + File.separator + "etc"
-						+ File.separator + "security" + File.separator + "cacerts.bks";
-					}
-					configuration.setTruststorePath(path);
-				}
-
-				KeyStoreOptions options = new KeyStoreOptions(
-					configuration.getTruststoreType(), configuration.getTruststorePath(),
-					configuration.getTruststorePassword());
 				try {
 					trustStore = KeyStore.getInstance(options.getType());
 					if (options.getPath() != null) {
@@ -114,10 +115,11 @@ class ServerTrustManager implements X509TrustManager {
 						}
 					}
 				}
-				stores.put(options, trustStore);
 	
 				if (trustStore == null) { // Disable root CA checking
 				 	configuration.setVerifyRootCAEnabled(false); 
+				} else {
+					stores.put(options, trustStore);
 				}
 			} 
 		}
