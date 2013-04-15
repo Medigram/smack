@@ -74,8 +74,7 @@ class PacketReader {
 
         // Create an executor to deliver incoming packets to listeners. We'll use a single
         // thread with an unbounded queue.
-        listenerExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-
+        listenerExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable,
                         "Smack Listener Processor (" + connection.connectionCounterValue + ")");
