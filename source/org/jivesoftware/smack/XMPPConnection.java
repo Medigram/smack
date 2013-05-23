@@ -562,16 +562,16 @@ public class XMPPConnection extends Connection {
 	private void connectUsingConfiguration(ConnectionConfiguration config)
 			throws Exception {
 		//String host = config.getHost();
-    DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
-    String host = address.getHost();
-    int port = config.getPort();
+    		DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
+    		String host = address.getHost();
+    		int port = config.getPort();
     
 		try {
-//			if (config.getSocketFactory() == null) {
+			if (config.getSocketFactory() == null) {
 				this.socket = new Socket(host, port);
-//			} else {
-//				this.socket = config.getSocketFactory().createSocket(host, port);
-//			}
+			} else {
+				this.socket = config.getSocketFactory().createSocket(host, port);
+			}
 			this.socket.setReuseAddress(true);
 		} catch (UnknownHostException uhe) {
 			String errorMessage = "Could not connect to " + host + ":" + port + ".";
@@ -583,6 +583,7 @@ public class XMPPConnection extends Connection {
 			throw new XMPPException(errorMessage, new XMPPError(
 					XMPPError.Condition.remote_server_error, errorMessage), ioe);
 		}
+
 		socketClosed = false;
 		initConnection();
 	}
@@ -1035,10 +1036,11 @@ public class XMPPConnection extends Connection {
 	 public void connect() throws XMPPException {
 		// Stablishes the connection, readers and writers
 		try {
-		connectUsingConfiguration(config);
+			connectUsingConfiguration(config);
 		} catch(Exception e) {
 			throw new XMPPException();
-}
+		}		
+		
 		// Automatically makes the login if the user was previouslly connected
 		// successfully
 		// to the server and the connection was terminated abruptly
