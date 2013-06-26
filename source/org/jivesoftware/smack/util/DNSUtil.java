@@ -82,6 +82,8 @@ public class DNSUtil {
      *      server can be reached at for the specified domain.
      */
     public static HostAddress resolveXMPPDomain(String domain) {
+        Log.i(TAG, "Got here!");
+
         if (context == null) {
             Log.e(TAG, "Context null, returning original domain "+domain);
             return new HostAddress(domain, 5222);
@@ -119,7 +121,7 @@ public class DNSUtil {
 	            // Randomize the weight.
 	            weight *= Math.random() * weight;
 	            
-                Log.v(TAG, "Checking host "+host+"...");
+                Log.i(TAG, "Checking host "+host+"...");
 
 	            if ((bestPriority == 0) || (priority < bestPriority)) {
                     Log.i(TAG, "Priority "+priority+" less than bestPriority "+bestPriority+"! Replacing bestHost "+bestHost +" with "+host);
@@ -130,7 +132,7 @@ public class DNSUtil {
 	            	bestHost = host;
 	            	bestPort = port;
 	            } else if (priority == bestPriority) {
-                    Log.v(TAG, "Priority "+priority+" equal to bestPriority "+bestPriority+"!");
+                    Log.i(TAG, "Priority "+priority+" equal to bestPriority "+bestPriority+"!");
 
 	            	// When we have like priorities then randomly choose a server based on its weight
 	            	// The weights were randomized above.
