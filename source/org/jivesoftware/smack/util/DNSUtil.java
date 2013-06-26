@@ -28,12 +28,15 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
+import android.util.Log;
+
 /**
  * Utilty class to perform DNS lookups for XMPP services.
  *
  * @author Matt Tucker
  */
 public class DNSUtil {
+    private static String TAG = "DNSUtil";
 
     /**
      * Create a cache to hold the 100 most recently accessed DNS lookups for a period of
@@ -80,16 +83,22 @@ public class DNSUtil {
      */
     public static HostAddress resolveXMPPDomain(String domain) {
         if (context == null) {
+            Log.e(TAG, "Context null, returning original domain "+domain);
             return new HostAddress(domain, 5222);
         }
+
         String key = "c" + domain;
+
         // Return item from cache if it exists.
         if (cache.containsKey(key)) {
             HostAddress address = (HostAddress)cache.get(key);
+
             if (address != null) {
+                Log.e(TAG, "Domain found in cache, resolved "+address.getHost());
                 return address;
             }
         }
+
         String bestHost = domain;
         int bestPort = 5222;
         int bestPriority = 0;
@@ -98,6 +107,7 @@ public class DNSUtil {
             Attributes dnsLookup = context.getAttributes("_xmpp-client._tcp." + domain, new String[]{"SRV"});
             Attribute srvAttribute = dnsLookup.get("SRV");
             NamingEnumeration srvRecords = srvAttribute.getAll();
+
             while(srvRecords.hasMore()) {
 				String srvRecord = (String) srvRecords.next();
 	            String [] srvRecordEntries = srvRecord.split(" ");
@@ -109,33 +119,45 @@ public class DNSUtil {
 	            // Randomize the weight.
 	            weight *= Math.random() * weight;
 	            
+                Log.v(TAG, "Checking host "+host+"...");
+
 	            if ((bestPriority == 0) || (priority < bestPriority)) {
-	            	// Choose a server with the lowest priority.
+                    Log.i(TAG, "Priority "+priority+" less than bestPriority "+bestPriority+"! Replacing bestHost "+bestHost +" with "+host);
+
+                	// Choose a server with the lowest priority.
 	            	bestPriority = priority;
 	            	bestWeight = weight;
 	            	bestHost = host;
 	            	bestPort = port;
 	            } else if (priority == bestPriority) {
+                    Log.v(TAG, "Priority "+priority+" equal to bestPriority "+bestPriority+"!");
+
 	            	// When we have like priorities then randomly choose a server based on its weight
 	            	// The weights were randomized above.
 	            	if (weight > bestWeight) {
+                        Log.i(TAG, "Weight "+weight+" greater than bestWeight "+bestWeight+"! Replacing bestHost "+bestHost +" with "+host);
 	            		bestWeight = weight;
 	            		bestHost = host;
 	            		bestPort = port;
 	            	}
 	            }
 			}
+        } catch (Exception e) {
+            Log.e(TAG, "Exception!");
         }
-        catch (Exception e) {
-            // Ignore.
-        }
+
+        Log.i(TAG, "Best host: "+bestHost);
+
         // Host entries in DNS should end with a ".".
         if (bestHost.endsWith(".")) {
         	bestHost = bestHost.substring(0, bestHost.length()-1);
         }
+
         HostAddress address = new HostAddress(bestHost, bestPort);
+        
         // Add item to cache.
         cache.put(key, address);
+        
         return address;
     }
 
@@ -177,8 +199,7 @@ public class DNSUtil {
             String [] srvRecordEntries = srvRecord.split(" ");
             port = Integer.parseInt(srvRecordEntries[srvRecordEntries.length-2]);
             host = srvRecordEntries[srvRecordEntries.length-1];
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Attempt lookup with older "jabber" name.
             try {
                 Attributes dnsLookup =
@@ -192,10 +213,12 @@ public class DNSUtil {
                 // Ignore.
             }
         }
+
         // Host entries in DNS should end with a ".".
         if (host.endsWith(".")) {
             host = host.substring(0, host.length()-1);
         }
+
         HostAddress address = new HostAddress(host, port);
         // Add item to cache.
         cache.put(key, address);

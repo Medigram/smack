@@ -564,9 +564,9 @@ public class XMPPConnection extends Connection {
 	private void connectUsingConfiguration(ConnectionConfiguration config)
 			throws Exception {
 		Log.i("XMPP", "Original host: "+config.getHost()+", original port: "+config.getPort());
+		DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
 
-    		DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
-    		String host = address.getHost();
+		String host = address.getHost();
 		//String host = "p2.medigram.com";
 		int port = address.getPort();
     
