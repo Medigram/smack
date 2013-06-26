@@ -44,6 +44,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.Collection;
 
+import android.util.Log;
+
 /**
  * Creates a socket connection to a XMPP server. This is the default connection
  * to a Jabber server and is specified in the XMPP Core (RFC 3920).
@@ -561,11 +563,15 @@ public class XMPPConnection extends Connection {
 
 	private void connectUsingConfiguration(ConnectionConfiguration config)
 			throws Exception {
-		//String host = config.getHost();
+		Log.i("XMPP", "Original host: "+config.getHost()+", original port: "+config.getPort());
+
     		DNSUtil.HostAddress address = DNSUtil.resolveXMPPDomain(config.getHost());
     		String host = address.getHost();
-    		int port = config.getPort();
+		//String host = "p2.medigram.com";
+		int port = address.getPort();
     
+		Log.i("XMPP", "Resolved host: "+address.getHost()+", resolved port: "+address.getPort());
+
 		try {
 			if (config.getSocketFactory() == null) {
 				this.socket = new Socket(host, port);
@@ -575,11 +581,14 @@ public class XMPPConnection extends Connection {
 			this.socket.setReuseAddress(true);
 		} catch (UnknownHostException uhe) {
 			String errorMessage = "Could not connect to " + host + ":" + port + ".";
+			Log.e("UnknownHostException", errorMessage);
+
 			throw new XMPPException(errorMessage, new XMPPError(
 					XMPPError.Condition.remote_server_timeout, errorMessage), uhe);
 		} catch (IOException ioe) {
 			String errorMessage = "XMPPError connecting to " + host + ":" + port
-					+ ".";
+					+ "." + ", message: "+ioe.getMessage();
+			Log.e("IOException", errorMessage);
 			throw new XMPPException(errorMessage, new XMPPError(
 					XMPPError.Condition.remote_server_error, errorMessage), ioe);
 		}
